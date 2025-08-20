@@ -2,6 +2,7 @@ package com.gly091020.CreateTreadmill;
 
 import com.gly091020.CreateTreadmill.block.TreadmillBlock;
 import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
+import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.config.TreadmillConfig;
 import com.gly091020.CreateTreadmill.item.TreadmillItem;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
@@ -15,54 +16,71 @@ import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
+import net.createmod.catnip.render.SpriteShiftEntry;
+import net.createmod.catnip.render.SpriteShifter;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
-@Mod(CreateTreadmillMod.MOD_ID)
+@Mod(CreateTreadmillMod.ModID)
 public class CreateTreadmillMod {
-    public static final String MOD_ID = "createtreadmill";
+    public static final String ModID = "createtreadmill";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static TreadmillConfig CONFIG;
+    public static final TreadmillConfig CONFIG = new TreadmillConfig();
 
-    public static final CreateRegistrate REGISTRIES = CreateRegistrate.create(MOD_ID);
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB_REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MOD_ID);
+    public static final CreateRegistrate REGISTRIES = CreateRegistrate.create(ModID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB_REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModID);
 
     public static final ItemEntry<TreadmillItem> TREADMILL_ITEM = REGISTRIES
             .item("treadmill", TreadmillItem::new)
             .register();
-    public static final RegistryObject<CreativeModeTab> CREATIVE_MODE_TAB = CREATIVE_MODE_TAB_REGISTER.register("treadmill",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_MODE_TAB = CREATIVE_MODE_TAB_REGISTER.register("treadmill",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("tab.createtreadmill.title"))
                     .withTabsBefore(AllCreativeModeTabs.PALETTES_CREATIVE_TAB.getId())
                     .icon(TREADMILL_ITEM::asStack)
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(TREADMILL_ITEM, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                        if(isCreator()){
+                            ItemStack playerHand = new ItemStack(Items.PLAYER_HEAD, 1);
+                            playerHand.set(DataComponents.PROFILE, new ResolvableProfile(Minecraft.getInstance().getGameProfile()));
+                            output.accept(playerHand, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                        }
                     })
                     .build()
     );
@@ -78,66 +96,70 @@ public class CreateTreadmillMod {
             .renderer(() -> TreadmillRenderer::new)
             .validBlock(TREADMILL_BLOCK)
             .register();
+    public static final PartialModel BELT_MODEL = PartialModel.of(ResourceLocation.fromNamespaceAndPath(ModID, "block/belt"));
+    public static final SpriteShiftEntry BELT_SHIFT = SpriteShifter.get(ResourceLocation.fromNamespaceAndPath(ModID, "block/belt"), ResourceLocation.fromNamespaceAndPath(ModID, "block/belt_shift"));
 
     public static final Map<Integer, LivingEntity> WALKING_ENTITY = new HashMap<>();
 
-    public CreateTreadmillMod() {
-        ModLoadingContext context = ModLoadingContext.get();
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static final UUID _5112151111121 = UUID.fromString("91bd580f-5f17-4e30-872f-2e480dd9a220");
+    public static final UUID N44 = UUID.fromString("5a33e9b0-35bc-44ed-9b4e-03e3e180a3d2");
 
-        // Using create's weird config system. Just use forge's config bruh
-        var specPair = new ForgeConfigSpec.Builder().configure((builder) -> {
-            var cfg = new TreadmillConfig();
-            cfg.registerAll(builder);
-            return cfg;
+    public CreateTreadmillMod(IEventBus bus, ModContainer container) {
+        Pair<TreadmillConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
+            CONFIG.registerAll(builder);
+            return CONFIG;
         });
-        CONFIG = specPair.getLeft();
         CONFIG.specification = specPair.getRight();
-        context.registerConfig(ModConfig.Type.COMMON, CONFIG.specification);
-
-        REGISTRIES.registerEventListeners(modBus);
-        CREATIVE_MODE_TAB_REGISTER.register(modBus);
-        if (ModList.get().isLoaded("touhou_little_maid")) {
-            MaidPlugin.registryData(modBus);
+        container.registerConfig(ModConfig.Type.COMMON, CONFIG.specification);
+        REGISTRIES.registerEventListeners(bus);
+        CREATIVE_MODE_TAB_REGISTER.register(bus);
+        if(ModList.get().isLoaded("touhou_little_maid")){
+            MaidPlugin.registryData(bus);
         }
-
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateTreadmillClient.onCtorClient(context, modBus));
-
+        container.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> {
+            if(ModList.get().isLoaded("cloth_config")){
+                return ClothConfigScreenGetter.get(parent);
+            }
+            return new BaseConfigScreen(parent, ModID);
+        });
     }
 
-    @EventBusSubscriber(value = Dist.CLIENT)
-    public static class ClientEventHandler {
+    public static boolean isCreator(){
+        return Objects.equals(Minecraft.getInstance().getGameProfile().getId(), N44) || Objects.equals(Minecraft.getInstance().getGameProfile().getId(), _5112151111121);
+    }
 
+    @EventBusSubscriber
+    public static class HandleEvent{
         @SubscribeEvent
-        public static void onRenderEntity(RenderLivingEvent.Pre<?, ?> event) {
-            if (WALKING_ENTITY.containsKey(event.getEntity().getId()) && !(event.getEntity() instanceof Player)) {
+        public static void onRenderEntity(RenderLivingEvent.Pre<?, ?> event){
+            if(WALKING_ENTITY.containsKey(event.getEntity().getId()) && !(event.getEntity() instanceof Player)) {
                 var speed = 1;
                 var entity = TreadmillBlockEntity.getBlockEntityByEntity(event.getEntity());
-                if (entity != null && Math.abs(entity.getSpeed()) > entity.getSettingSpeed()) {
+                if(entity != null && Math.abs(entity.getSpeed()) > entity.getSettingSpeed()){
                     speed = (int) (Math.abs(entity.getSpeed()) / 32);
                 }
                 event.getEntity().walkAnimation.setSpeed(speed);
             }
         }
-    }
-
-    @EventBusSubscriber
-    public static class CommonEventHandler {
 
         @SubscribeEvent
-        public static void onEntityDie(LivingDeathEvent deathEvent) {
+        public static void onEntityDie(LivingDeathEvent deathEvent){
             var entity = deathEvent.getEntity();
-            if (entity.level().getBlockState(entity.blockPosition()).is(TREADMILL_BLOCK.get())) {
+            if(entity.level().getBlockState(entity.blockPosition()).is(TREADMILL_BLOCK)){
                 var last = entity.getLastAttacker();
-                if (last instanceof ServerPlayer player) {
-                    var manager = player.server.getAdvancements();
-                    var adv = manager.getAdvancement(new ResourceLocation(MOD_ID, "run_to_die"));
-                    if (adv != null) {
-                        player.getAdvancements().award(adv, "0");
-                    }
+                if(last instanceof ServerPlayer player){
+                    grantAdvancement(player, ResourceLocation.fromNamespaceAndPath(ModID, "run_to_die"), "0");
                 }
             }
         }
 
+        public static void grantAdvancement(ServerPlayer player, ResourceLocation advancementId, String key) {
+            ServerAdvancementManager manager = player.server.getAdvancements();
+            AdvancementHolder advancement = manager.get(advancementId);
+
+            if (advancement != null) {
+                player.getAdvancements().award(advancement, key);
+            }
+        }
     }
 }
