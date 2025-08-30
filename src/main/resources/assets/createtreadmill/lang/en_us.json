@@ -28,6 +28,7 @@
   "createtreadmill.ponder.treadmill_maid.text_1": "If you have Touhou Maid Mod installed, you can assign the 'Treadmill' task to maids, allowing them to operate the treadmill.",
   "createtreadmill.ponder.treadmill_maid.text_2": "Of course, the previous mechanics still apply normally...",
   "createtreadmill.ponder.treadmill_maid.text_3": "And the maids won't escape so easily...",
+  "createtreadmill.ponder.treadmill_maid.text_4": "Really?",
 
   "advancement.createtreadmill.run_to_die": "Capitalist",
   "advancement.createtreadmill.run_to_die.desc": "Kill a mob by exhaustion on a treadmill. (How cruel...)\n§7(Hidden Advancement)",

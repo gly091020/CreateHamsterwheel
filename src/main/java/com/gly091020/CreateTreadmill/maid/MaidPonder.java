@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.neoforged.fml.ModList;
 
 public class MaidPonder {
     public static void registry(MultiSceneBuilder builder) {
@@ -57,7 +58,13 @@ public class MaidPonder {
         scene.overlay().showText(40)
                 .placeNearTarget()
                 .text("而且女仆不会轻易逃脱……")
-                .pointAt(util.vector().of(2, 2, 2));
+                .pointAt(util.vector().of(2, 2, 3));
+        if(ModList.get().isLoaded("touhou_little_mad")){
+            scene.overlay().showText(40)
+                    .placeNearTarget()
+                    .text("也许吧")
+                    .pointAt(util.vector().of(2, 2, 2));
+        }
         scene.addKeyframe();
         scene.idle(45);
         scene.markAsFinished();

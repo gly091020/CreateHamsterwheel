@@ -5,9 +5,11 @@ import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
 import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.config.TreadmillConfig;
 import com.gly091020.CreateTreadmill.item.TreadmillItem;
+import com.gly091020.CreateTreadmill.little_mad.LittleMadRegistry;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.gly091020.CreateTreadmill.renderer.TreadmillRenderer;
 import com.gly091020.CreateTreadmill.renderer.TreadmillVisual;
+import com.gly091020.touhouLittleMad.LittleMadMod;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.api.stress.BlockStressValues;
@@ -115,6 +117,9 @@ public class CreateTreadmillMod {
         CREATIVE_MODE_TAB_REGISTER.register(bus);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
+        }
+        if(ModList.get().isLoaded("touhou_little_mad")){
+            LittleMadRegistry.registry();
         }
         container.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> {
             if(ModList.get().isLoaded("cloth_config")){
