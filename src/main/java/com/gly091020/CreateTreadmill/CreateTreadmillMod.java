@@ -9,7 +9,6 @@ import com.gly091020.CreateTreadmill.little_mad.LittleMadRegistry;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.gly091020.CreateTreadmill.renderer.TreadmillRenderer;
 import com.gly091020.CreateTreadmill.renderer.TreadmillVisual;
-import com.gly091020.touhouLittleMad.LittleMadMod;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllCreativeModeTabs;
 import com.simibubi.create.api.stress.BlockStressValues;
@@ -19,7 +18,6 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
 import net.minecraft.advancements.AdvancementHolder;
@@ -43,8 +41,8 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -121,12 +119,9 @@ public class CreateTreadmillMod {
         if(ModList.get().isLoaded("touhou_little_mad")){
             LittleMadRegistry.registry();
         }
-        container.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> {
-            if(ModList.get().isLoaded("cloth_config")){
-                return ClothConfigScreenGetter.get(parent);
-            }
-            return new BaseConfigScreen(parent, ModID);
-        });
+        if(FMLEnvironment.dist.isClient()){
+            ClothConfigScreenGetter.registryScreen(container);
+        }
     }
 
     public static boolean isCreator(){
