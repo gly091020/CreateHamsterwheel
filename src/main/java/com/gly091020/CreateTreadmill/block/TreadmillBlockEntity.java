@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 import static com.gly091020.CreateTreadmill.block.TreadmillBlock.PART;
 import static com.gly091020.CreateTreadmill.block.TreadmillBlock.findPart;
@@ -35,6 +37,7 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     private boolean isRuned = false;
     private int speedUpTimer = 0;
     private int entityTimer = Integer.MAX_VALUE;
+    private UUID entityUUID;
     public TreadmillBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setChanged();
@@ -43,6 +46,12 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     @Override
     public void tick() {
         if(this.getBlockState().getValue(PART) != Part.BOTTOM_FRONT){return;}
+        if(entityUUID != null && level instanceof ServerLevel serverLevel){
+            if(serverLevel.getEntity(entityUUID) instanceof LivingEntity entity){
+                setOnTreadmillEntity(entity);
+            }
+            entityUUID = null;
+        }
         if(onTreadmillEntity != null){
             if(onTreadmillEntity.isRemoved()){
                 setOnTreadmillEntity(null);
@@ -135,6 +144,7 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
             entityTimer = Integer.MAX_VALUE;
         }
         this.onTreadmillEntity = onTreadmillEntity;
+        setChanged();
         setPos();
         update();
     }
@@ -328,5 +338,26 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    @Override
+    public void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
+        if(this.getBlockState().getValue(PART) != Part.BOTTOM_FRONT){return;}
+        if(clientPacket)return;
+        if(onTreadmillEntity != null)
+            tag.putUUID("onTreadmillEntity", onTreadmillEntity.getUUID());
+        tag.putInt("entityTimer", entityTimer);
+    }
+
+    @Override
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
+        if(this.getBlockState().getValue(PART) != Part.BOTTOM_FRONT){return;}
+        if(clientPacket)return;
+        if(compound.contains("onTreadmillEntity")){
+            entityUUID = compound.getUUID("onTreadmillEntity");
+        }
+        entityTimer = compound.contains("entityTimer") ? compound.getInt("entityTimer") : 0;
     }
 }

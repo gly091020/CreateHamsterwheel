@@ -216,6 +216,8 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
             level.setBlock(p3, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         } else {
             var p = findPart(level, oldState, pos, Part.BOTTOM_BACK);
+            if(level.getBlockState(p).is(CreateTreadmillMod.TREADMILL_BLOCK) && level.getBlockState(p).getValue(HORIZONTAL_FACING) != oldState.getValue(HORIZONTAL_FACING))
+                return;
             destroy(level, p, level.getBlockState(p));
             level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
