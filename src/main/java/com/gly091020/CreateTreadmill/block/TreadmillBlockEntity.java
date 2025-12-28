@@ -2,6 +2,7 @@ package com.gly091020.CreateTreadmill.block;
 
 import com.gly091020.CreateTreadmill.CreateTreadmillMod;
 import com.gly091020.CreateTreadmill.Part;
+import com.gly091020.CreateTreadmill.maid.MaidHelper;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -133,7 +134,8 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
 
     public void setOnTreadmillEntity(@Nullable LivingEntity onTreadmillEntity) {
         if(onTreadmillEntity == null && this.onTreadmillEntity != null){
-            this.onTreadmillEntity.setDeltaMovement(Vec3.ZERO);
+            if(!canDropIt())
+                this.onTreadmillEntity.setDeltaMovement(Vec3.ZERO);
             CreateTreadmillMod.WALKING_ENTITY.remove(this.onTreadmillEntity.getId());
             this.onTreadmillEntity.walkAnimation.setSpeed(0);
         }
@@ -147,6 +149,11 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         setChanged();
         setPos();
         update();
+    }
+
+    @Override
+    public void remove() {
+        setOnTreadmillEntity(null);
     }
 
     public Entity getOnTreadmillEntity() {
@@ -270,26 +277,46 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
 
     private void dropIt(){
         if(!CreateTreadmillMod.CONFIG.TREADMILL_DROP_IT.get()){return;}
+        if(onTreadmillEntity == null)return;
         switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)) {
             case NORTH, EAST -> {
                 if(getSpeed() < 0){
                     float m = 3f * (Math.abs(getSpeed()) / 256);
                     onTreadmillEntity.setDeltaMovement(Vec3.atLowerCornerOf(getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING).getNormal()).multiply(m, 0, m));
-                    onTreadmillEntity = null;
+                    setOnTreadmillEntity(null);
                 }
             }
             case SOUTH, WEST -> {
                 if(getSpeed() > 0){
                     float m = 3f * (Math.abs(getSpeed()) / 256);
                     onTreadmillEntity.setDeltaMovement(Vec3.atLowerCornerOf(getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING).getNormal()).multiply(m, 0, m));
-                    onTreadmillEntity = null;
+                    setOnTreadmillEntity(null);
                 }
             }
         }
     }
 
+    private boolean canDropIt(){
+        if(!CreateTreadmillMod.CONFIG.TREADMILL_DROP_IT.get()){return false;}
+        if(onTreadmillEntity == null)return false;
+        switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)) {
+            case NORTH, EAST -> {
+                if(getSpeed() < 0){
+                    return true;
+                }
+            }
+            case SOUTH, WEST -> {
+                if(getSpeed() > 0){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public float getGeneratedSpeed() {
+        if(canDropIt())return 0;
         int speedUp = this.speedUpTimer > 0 ? 2 : 1;
         if (isRunning) {
             switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)) {
@@ -306,6 +333,16 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
 
     public float getSettingSpeed(){
         return CreateTreadmillMod.CONFIG.TREADMILL_BASE_SPEED.get();
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        int maid = 1;
+        if(CreateTreadmillMod.hasMaid() && MaidHelper.isMaid(onTreadmillEntity)){
+            maid = CreateTreadmillMod.CONFIG.MAID_MAGNIFICATION.get() * MaidHelper.getMaidLevel(onTreadmillEntity);
+            if(maid == 0)maid = 1;
+        }
+        return super.calculateAddedStressCapacity() * maid;
     }
 
     public boolean isMoving(){

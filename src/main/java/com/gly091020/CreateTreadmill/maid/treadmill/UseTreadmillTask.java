@@ -41,4 +41,9 @@ public class UseTreadmillTask implements IMaidTask {
     public boolean enableLookAndRandomWalk(@NotNull EntityMaid maid) {
         return false;
     }
+
+    @Override
+    public boolean isHidden(@NotNull EntityMaid maid) {
+        return true;
+    }
 }

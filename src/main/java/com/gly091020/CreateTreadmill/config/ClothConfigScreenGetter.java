@@ -34,7 +34,8 @@ public class ClothConfigScreenGetter {
         builder.setParentScreen(parent);
         var entryBuilder = builder.entryBuilder();
         var category = builder.getOrCreateCategory(Component.empty());
-        category.addEntry(i(entryBuilder, CONFIG.TREADMILL_STRESS, "stress", 16, 0).build());
+        category.addEntry(i(entryBuilder, CONFIG.TREADMILL_STRESS, "stress", 32, 0).build());
+        category.addEntry(i(entryBuilder, CONFIG.MAID_MAGNIFICATION, "maid_magnification", 16, 0).build());
         category.addEntry(i(entryBuilder, CONFIG.TREADMILL_BASE_SPEED, "base_speed", 32, 0).build());
         category.addEntry(b(entryBuilder, CONFIG.TREADMILL_DROP_IT, "drop_it").build());
         category.addEntry(b(entryBuilder, CONFIG.TREADMILL_BREAK, "break").build());

@@ -3,7 +3,7 @@
 
   "block.createtreadmill.treadmill": "跑步机",
   "task.createtreadmill.use_treadmill": "跑步机",
-  "task.createtreadmill.use_treadmill.desc": "女仆会使用周围的跑步机",
+  "task.createtreadmill.use_treadmill.desc": "§c已弃用，请直接把女仆用拴绳栓上跑步机",
   "tip.createtreadmill.speedup": "正在加速，剩余%s秒",
   "tip.createtreadmill.break": "还有%s秒挣脱",
 
@@ -25,7 +25,7 @@
   "createtreadmill.ponder.treadmill_speedup.text_4": "但我相信，跑步机上的生物会更想逃脱",
 
   "createtreadmill.ponder.treadmill_maid.header": "车万女仆？车万奴仆！",
-  "createtreadmill.ponder.treadmill_maid.text_1": "如果你安装了车万女仆，你可以指定女仆任务为“跑步机”来让女仆使用跑步机",
+  "createtreadmill.ponder.treadmill_maid.text_1": "如果你安装了车万女仆，你可以直接把女仆拴上跑步机来让女仆使用跑步机（女仆现在可以被栓）",
   "createtreadmill.ponder.treadmill_maid.text_2": "当然，之前的操作也是通用的……",
   "createtreadmill.ponder.treadmill_maid.text_3": "而且女仆不会轻易逃脱……",
   "createtreadmill.ponder.treadmill_maid.text_4": "也许吧……",

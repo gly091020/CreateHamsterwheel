@@ -1,5 +1,6 @@
 package com.gly091020.CreateTreadmill;
 
+import com.github.tartaricacid.touhoulittlemaid.api.event.InteractMaidEvent;
 import com.gly091020.CreateTreadmill.block.TreadmillBlock;
 import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
 import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
@@ -128,6 +129,14 @@ public class CreateTreadmillMod {
         return Objects.equals(Minecraft.getInstance().getGameProfile().getId(), N44) || Objects.equals(Minecraft.getInstance().getGameProfile().getId(), _5112151111121);
     }
 
+    public static boolean hasMaid(){
+        return ModList.get().isLoaded("touhou_little_maid");
+    }
+
+    public static boolean hasMaidUseHandCrank(){
+        return ModList.get().isLoaded("muhc");
+    }
+
     @EventBusSubscriber
     public static class HandleEvent{
         @SubscribeEvent
@@ -150,6 +159,18 @@ public class CreateTreadmillMod {
                 if(last instanceof ServerPlayer player){
                     grantAdvancement(player, ResourceLocation.fromNamespaceAndPath(ModID, "run_to_die"), "0");
                 }
+            }
+        }
+
+        @SubscribeEvent
+        public static void onInteractMaid(InteractMaidEvent event){
+            var maid = event.getMaid();
+            var player = event.getPlayer();
+            var stack = event.getStack();
+            if(maid.getOwner() != null && player.is(maid.getOwner()) && stack.is(Items.LEAD)){
+                maid.setLeashedTo(player, true);
+                stack.shrink(1);
+                event.setCanceled(true);
             }
         }
 
