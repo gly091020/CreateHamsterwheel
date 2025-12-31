@@ -318,13 +318,18 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     public float getGeneratedSpeed() {
         if(canDropIt())return 0;
         int speedUp = this.speedUpTimer > 0 ? 2 : 1;
+        float entitySpeed = 1;
+        if (onTreadmillEntity instanceof Player player) {
+            if(player.isSprinting())
+                entitySpeed = 2; // tmd偷懒是吧
+        }
         if (isRunning) {
             switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)) {
                 case NORTH, EAST -> {
-                    return getSettingSpeed() * speedUp;
+                    return getSettingSpeed() * speedUp * entitySpeed;
                 }
                 case SOUTH, WEST -> {
-                    return -getSettingSpeed() * speedUp;
+                    return -getSettingSpeed() * speedUp * entitySpeed;
                 }
             }
         }
@@ -365,6 +370,19 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
             }
         }
         return false;
+    }
+
+    public double getEntitySpeed(){
+        if(onTreadmillEntity == null)return 0;
+        switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)){
+            case EAST, WEST -> {
+                return onTreadmillEntity.getKnownMovement().x;
+            }
+            case SOUTH, NORTH -> {
+                return onTreadmillEntity.getKnownMovement().z;
+            }
+        }
+        return 0;
     }
 
     @Override

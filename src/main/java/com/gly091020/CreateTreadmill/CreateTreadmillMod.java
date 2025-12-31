@@ -1,12 +1,12 @@
 package com.gly091020.CreateTreadmill;
 
-import com.github.tartaricacid.touhoulittlemaid.api.event.InteractMaidEvent;
 import com.gly091020.CreateTreadmill.block.TreadmillBlock;
 import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
 import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.config.TreadmillConfig;
 import com.gly091020.CreateTreadmill.item.TreadmillItem;
 import com.gly091020.CreateTreadmill.little_mad.LittleMadRegistry;
+import com.gly091020.CreateTreadmill.maid.MaidEventHandler;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.gly091020.CreateTreadmill.renderer.TreadmillRenderer;
 import com.gly091020.CreateTreadmill.renderer.TreadmillVisual;
@@ -116,6 +116,7 @@ public class CreateTreadmillMod {
         CREATIVE_MODE_TAB_REGISTER.register(bus);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
+            bus.register(MaidEventHandler.class);
         }
         if(ModList.get().isLoaded("touhou_little_mad")){
             LittleMadRegistry.registry();
@@ -159,18 +160,6 @@ public class CreateTreadmillMod {
                 if(last instanceof ServerPlayer player){
                     grantAdvancement(player, ResourceLocation.fromNamespaceAndPath(ModID, "run_to_die"), "0");
                 }
-            }
-        }
-
-        @SubscribeEvent
-        public static void onInteractMaid(InteractMaidEvent event){
-            var maid = event.getMaid();
-            var player = event.getPlayer();
-            var stack = event.getStack();
-            if(maid.getOwner() != null && player.is(maid.getOwner()) && stack.is(Items.LEAD)){
-                maid.setLeashedTo(player, true);
-                stack.shrink(1);
-                event.setCanceled(true);
             }
         }
 

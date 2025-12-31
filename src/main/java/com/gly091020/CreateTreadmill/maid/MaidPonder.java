@@ -31,12 +31,7 @@ public class MaidPonder {
 
         scene.idle(5);
         scene.world().showSection(selection, Direction.DOWN);
-        scene.idle(10);
-        scene.overlay().showText(40)
-                .placeNearTarget()
-                .text("如果你安装了车万女仆，你可以指定女仆任务为“跑步机”来让女仆使用跑步机")
-                .pointAt(util.vector().of(2, 2, 2));
-        scene.addKeyframe();
+        scene.idle(5);
         scene.world().createEntity(level -> {
             var entity = new EntityMaid(level);
             entity.setPos(1, 1, 1);
@@ -48,7 +43,18 @@ public class MaidPonder {
             return entity;
         });
         scene.world().setKineticSpeed(selection, -32);
-        scene.idle(60);
+        scene.idle(5);
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .text("如果你安装了车万女仆，你可以指定女仆任务为“跑步机”来让女仆使用跑步机")
+                .pointAt(util.vector().of(2, 2, 2));
+        scene.idle(50);
+        scene.overlay().showText(60)
+                .placeNearTarget()
+                .text("而且随着好感度的增加，女仆产生的应力会更多")
+                .pointAt(util.vector().of(2, 2, 3));
+        scene.addKeyframe();
+        scene.idle(70);
         scene.overlay().showText(40)
                 .placeNearTarget()
                 .text("当然，之前的操作也是通用的……")

@@ -3,7 +3,7 @@
 
   "block.createtreadmill.treadmill": "Treadmill",
   "task.createtreadmill.use_treadmill": "Treadmill",
-  "task.createtreadmill.use_treadmill.desc": "The maid will use nearby treadmills",
+  "task.createtreadmill.use_treadmill.desc": "§cDeprecated. Please directly leash the maid to the treadmill.",
   "tip.createtreadmill.speedup": "Speeding up, %s seconds remaining",
   "tip.createtreadmill.break": "Breaking free in %s seconds",
 
@@ -26,9 +26,10 @@
 
   "createtreadmill.ponder.treadmill_maid.header": "Touhou Maid Collaboration",
   "createtreadmill.ponder.treadmill_maid.text_1": "If you have Touhou Maid Mod installed, you can assign the 'Treadmill' task to maids, allowing them to operate the treadmill.",
-  "createtreadmill.ponder.treadmill_maid.text_2": "Of course, the previous mechanics still apply normally...",
-  "createtreadmill.ponder.treadmill_maid.text_3": "And the maids won't escape so easily...",
-  "createtreadmill.ponder.treadmill_maid.text_4": "Really?",
+  "createtreadmill.ponder.treadmill_maid.text_2": "Moreover, as her Affection Level increases, the maid generates even more stress.",
+  "createtreadmill.ponder.treadmill_maid.text_3": "Of course, the previous mechanics still apply normally...",
+  "createtreadmill.ponder.treadmill_maid.text_4": "And the maids won't escape so easily...",
+  "createtreadmill.ponder.treadmill_maid.text_5": "Really?",
 
   "advancement.createtreadmill.run_to_die": "Capitalist",
   "advancement.createtreadmill.run_to_die.desc": "Kill a mob by exhaustion on a treadmill. (How cruel...)\n§7(Hidden Advancement)",
@@ -44,6 +45,8 @@
   "config.createtreadmill.break.tip": "Whether entities on the treadmill can break free",
   "config.createtreadmill.speed_up": "Treadmill Boost",
   "config.createtreadmill.speed_up.tip": "Whether attacking entities on the treadmill speeds it up",
+  "config.createtreadmill.maid_magnification": "Maid Affection Stress Multiplier",
+  "config.createtreadmill.maid_magnification.tip": "The stress produced by the treadmill will be multiplied by this value and the Maid Affection Level.",
 
   "config.jade.plugin_createtreadmill.treadmill_provider": "Treadmill"
 }

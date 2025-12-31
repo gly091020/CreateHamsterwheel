@@ -26,9 +26,10 @@
 
   "createtreadmill.ponder.treadmill_maid.header": "车万女仆？车万奴仆！",
   "createtreadmill.ponder.treadmill_maid.text_1": "如果你安装了车万女仆，你可以直接把女仆拴上跑步机来让女仆使用跑步机（女仆现在可以被栓）",
-  "createtreadmill.ponder.treadmill_maid.text_2": "当然，之前的操作也是通用的……",
-  "createtreadmill.ponder.treadmill_maid.text_3": "而且女仆不会轻易逃脱……",
-  "createtreadmill.ponder.treadmill_maid.text_4": "也许吧……",
+  "createtreadmill.ponder.treadmill_maid.text_2": "而且随着好感度的增加，女仆产生的应力会更多",
+  "createtreadmill.ponder.treadmill_maid.text_3": "当然，之前的操作也是通用的……",
+  "createtreadmill.ponder.treadmill_maid.text_4": "而且女仆不会轻易逃脱……",
+  "createtreadmill.ponder.treadmill_maid.text_5": "也许吧……",
 
   "advancement.createtreadmill.run_to_die": "资本家",
   "advancement.createtreadmill.run_to_die.desc": "让一个生物在跑步机上累死（你真残忍……）\n§7（隐藏进度）",
@@ -44,6 +45,8 @@
   "config.createtreadmill.break.tip": "在跑步机上的生物是否可以挣脱",
   "config.createtreadmill.speed_up": "跑步机加速",
   "config.createtreadmill.speed_up.tip": "攻击跑步机上的生物是否可以加速",
+  "config.createtreadmill.maid_magnification": "女仆好感度提升应力倍率",
+  "config.createtreadmill.maid_magnification.tip": "跑步机生产的应力将会乘以此值和女仆好感度等级",
 
   "config.jade.plugin_createtreadmill.treadmill_provider": "跑步机"
 }
