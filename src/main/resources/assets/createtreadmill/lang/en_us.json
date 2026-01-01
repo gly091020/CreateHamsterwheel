@@ -2,6 +2,7 @@
   "tab.createtreadmill.title": "Create: Treadmill",
 
   "block.createtreadmill.treadmill": "Treadmill",
+  "block.createtreadmill.maid_motor": "Maid Motor",
   "task.createtreadmill.use_treadmill": "Treadmill",
   "task.createtreadmill.use_treadmill.desc": "§cDeprecated. Please directly leash the maid to the treadmill.",
   "tip.createtreadmill.speedup": "Speeding up, %s seconds remaining",
@@ -48,5 +49,7 @@
   "config.createtreadmill.maid_magnification": "Maid Affection Stress Multiplier",
   "config.createtreadmill.maid_magnification.tip": "The stress produced by the treadmill will be multiplied by this value and the Maid Affection Level.",
 
-  "config.jade.plugin_createtreadmill.treadmill_provider": "Treadmill"
+  "config.jade.plugin_createtreadmill.treadmill_provider": "Treadmill",
+  "painting.createtreadmill.little_mad.title": "GLY's Failed Creation",
+  "painting.createtreadmill.little_mad.author": "gly091020, N44"
 }

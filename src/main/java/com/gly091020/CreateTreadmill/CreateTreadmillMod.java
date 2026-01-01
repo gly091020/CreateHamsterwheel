@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -46,6 +47,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -78,7 +80,8 @@ public class CreateTreadmillMod {
                     .icon(TREADMILL_ITEM::asStack)
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(TREADMILL_ITEM, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
-                        if(ModList.get().isLoaded("touhou_little_maid")){
+                        if(ModList.get().isLoaded("touhou_little_maid") && !FMLEnvironment.production){
+                            // todo:未完成，先隐藏物品
                             output.accept(MaidPlugin.MAID_MOTOR_ITEM, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                         }
                         if(isCreator()){

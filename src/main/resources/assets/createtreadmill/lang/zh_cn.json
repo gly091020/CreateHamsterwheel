@@ -2,6 +2,7 @@
   "tab.createtreadmill.title": "机械动力：跑步机",
 
   "block.createtreadmill.treadmill": "跑步机",
+  "block.createtreadmill.maid_motor": "女仆马达",
   "task.createtreadmill.use_treadmill": "跑步机",
   "task.createtreadmill.use_treadmill.desc": "§c已弃用，请直接把女仆用拴绳栓上跑步机",
   "tip.createtreadmill.speedup": "正在加速，剩余%s秒",
@@ -48,5 +49,8 @@
   "config.createtreadmill.maid_magnification": "女仆好感度提升应力倍率",
   "config.createtreadmill.maid_magnification.tip": "跑步机生产的应力将会乘以此值和女仆好感度等级",
 
-  "config.jade.plugin_createtreadmill.treadmill_provider": "跑步机"
+  "config.jade.plugin_createtreadmill.treadmill_provider": "跑步机",
+
+  "painting.createtreadmill.little_mad.title": "GLY的失败之作",
+  "painting.createtreadmill.little_mad.author": "gly091020, N44"
 }
