@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "facing=down,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor_vertical",
+      "x": 180
+    },
+    "facing=east,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor",
+      "y": 270
+    },
+    "facing=north,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor",
+      "y": 180
+    },
+    "facing=south,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor"
+    },
+    "facing=up,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor_vertical"
+    },
+    "facing=west,glass=false": {
+      "model": "createtreadmill:block/maid_motor/maid_motor",
+      "y": 90
+    },
+
+    "facing=down,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor_vertical",
+      "x": 180
+    },
+    "facing=east,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor",
+      "y": 270
+    },
+    "facing=north,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor",
+      "y": 180
+    },
+    "facing=south,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor"
+    },
+    "facing=up,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor_vertical"
+    },
+    "facing=west,glass=true": {
+      "model": "createtreadmill:block/maid_motor/glass/maid_motor",
+      "y": 90
+    }
+  }
+}

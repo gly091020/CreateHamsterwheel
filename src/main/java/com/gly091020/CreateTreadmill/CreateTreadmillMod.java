@@ -45,6 +45,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -77,6 +78,9 @@ public class CreateTreadmillMod {
                     .icon(TREADMILL_ITEM::asStack)
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(TREADMILL_ITEM, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                        if(ModList.get().isLoaded("touhou_little_maid")){
+                            output.accept(MaidPlugin.MAID_MOTOR_ITEM, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+                        }
                         if(isCreator()){
                             ItemStack playerHand = new ItemStack(Items.PLAYER_HEAD, 1);
                             playerHand.set(DataComponents.PROFILE, new ResolvableProfile(Minecraft.getInstance().getGameProfile()));
@@ -116,7 +120,7 @@ public class CreateTreadmillMod {
         CREATIVE_MODE_TAB_REGISTER.register(bus);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
-            bus.register(MaidEventHandler.class);
+            NeoForge.EVENT_BUS.register(MaidEventHandler.class);
         }
         if(ModList.get().isLoaded("touhou_little_mad")){
             LittleMadRegistry.registry();
