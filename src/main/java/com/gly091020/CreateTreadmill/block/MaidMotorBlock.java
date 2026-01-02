@@ -29,12 +29,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidMotorBlockEntity> {
@@ -136,18 +140,15 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(@NotNull BlockState state, @NotNull HitResult target, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull Player player) {
-        return super.getCloneItemStack(state, target, level, pos, player);
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if(!pNewState.is(MaidPlugin.MAID_MOTOR_BLOCK)){
+    protected @NotNull List<ItemStack> getDrops(@NotNull BlockState state, LootParams.@NotNull Builder params) {
+        try {
+            var blockEntity = params.getParameter(LootContextParams.BLOCK_ENTITY);
             var stack = MaidPlugin.MAID_MOTOR_BLOCK.asStack().copyWithCount(1);
-            if (pLevel.getBlockEntity(pPos) instanceof MaidMotorBlockEntity entity && entity.getMaid() != null)
+            if (blockEntity instanceof MaidMotorBlockEntity entity && entity.getMaid() != null)
                 stack.set(InitDataComponent.MAID_INFO, CustomData.of(MaidMotorBlockEntity.maidToNBT(entity.getMaid())));
-            popResource(pLevel, pPos, stack);
+            return List.of(stack);
+        }catch (NoSuchElementException e){
+            return List.of(MaidPlugin.MAID_MOTOR_BLOCK.asStack().copyWithCount(1));
         }
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
     }
 }
