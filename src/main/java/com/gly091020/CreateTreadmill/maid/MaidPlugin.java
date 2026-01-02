@@ -16,28 +16,30 @@ import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
 import com.simibubi.create.foundation.data.SharedProperties;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.Optional;
 
+import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
+import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 @LittleMaidExtension
 public class MaidPlugin implements ILittleMaid {
-    public static final ItemEntry<MaidMotorItem> MAID_MOTOR_ITEM = CreateTreadmillMod.REGISTRIES
-            .item("maid_motor", MaidMotorItem::new)
-            .register();
     public static final BlockEntry<MaidMotorBlock> MAID_MOTOR_BLOCK = CreateTreadmillMod.REGISTRIES
             .block("maid_motor", MaidMotorBlock::new)
             .initialProperties(SharedProperties::stone)
+            .properties(p -> p.mapColor(MapColor.COLOR_BROWN))
             .transform(axeOrPickaxe())
+            .item(MaidMotorItem::new)
+            .transform(customItemModel())
             .register();
     public static final BlockEntityEntry<MaidMotorBlockEntity> MAID_MOTOR_ENTITY = CreateTreadmillMod.REGISTRIES
             .blockEntity("maid_motor_entity", MaidMotorBlockEntity::new)

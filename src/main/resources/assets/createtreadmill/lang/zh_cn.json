@@ -52,5 +52,18 @@
   "config.jade.plugin_createtreadmill.treadmill_provider": "跑步机",
 
   "painting.createtreadmill.little_mad.title": "GLY的失败之作",
-  "painting.createtreadmill.little_mad.author": "gly091020, N44"
+  "painting.createtreadmill.little_mad.author": "gly091020, N44",
+
+  "block.createtreadmill.maid_motor.maid_name": "包含女仆：%s",
+  "block.createtreadmill.maid_motor.tip1": "§c请注意，目前此物品处于测试状态，",
+  "block.createtreadmill.maid_motor.tip2": "§c可能会导致女仆数据丢失，请备份存档！",
+
+  "createtreadmill.ponder.maid_motor.header": "精 简 过 度",
+  "createtreadmill.ponder.maid_motor.text_1": "这是一个女仆马达",
+  "createtreadmill.ponder.maid_motor.text_2": "手持魂符或照片可放入女仆，再次使用魂符取出。",
+  "createtreadmill.ponder.maid_motor.text_3": "放入女仆后将会自动计算输出应力。",
+  "createtreadmill.ponder.maid_motor.text_4": "可以在侧面调节输出速度",
+  "createtreadmill.ponder.maid_motor.text_5": "用扳手点击后面可以开窗，将会显示内部的女仆。",
+  "createtreadmill.ponder.maid_motor.text_6": "破坏马达后会保留女仆数据。",
+  "createtreadmill.ponder.maid_motor.text_7": "如果安装了女仆摇曲柄，女仆摇曲柄产生的应力会一并计算。"
 }

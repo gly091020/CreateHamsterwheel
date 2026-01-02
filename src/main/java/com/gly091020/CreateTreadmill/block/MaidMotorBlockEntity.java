@@ -1,3 +1,4 @@
+// 我是历史学家，这就是史（
 package com.gly091020.CreateTreadmill.block;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
@@ -19,11 +20,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
     @Nullable
     private EntityMaid maid;
+
+    @Nullable
+    private EntityMaid renderMaid;
 
     @Nullable
     private CompoundTag maidTag;
@@ -72,10 +77,23 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
         maidTag = null;
         notifyUpdate();
         updateGeneratedRotation();
+        if(maid != null && level != null && level.isClientSide){
+            if(renderMaid == null){
+                renderMaid = NBTToMaid(maidToNBTOnlyRender(maid), level);
+            }
+        }
+        if (maid == null)
+            renderMaid = null;
     }
 
     public @Nullable EntityMaid getMaid(){
         return maid;
+    }
+
+    public @Nullable EntityMaid getRenderMaid() {
+        if (level != null && !level.isClientSide)
+            CreateTreadmillMod.LOGGER.warn("渲染调用不在客户端？");
+        return renderMaid;
     }
 
     @Override
@@ -129,11 +147,10 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
             if(level.isClientSide && maid != null)
                 setMaid(NBTToMaid(maidToNBTOnlyRender(maid), level));
         }
-        if (level != null && level.isClientSide && maid != null) {
-            maid.tick();
-            maid.setOnGround(true);
-            maid.walkAnimation.setSpeed(Math.abs(getSpeed()) > 0 ? Math.abs(getSpeed() / 16) : 0);
-            maid.calculateEntityAnimation(false);
+        if (level != null && level.isClientSide && renderMaid != null) {
+            renderMaid.tick();
+            renderMaid.setOnGround(true);
+            renderMaid.walkAnimation.setSpeed(Math.abs(getSpeed()) > 0 ? Math.abs(getSpeed() / 16) : 0);
         }
     }
 
@@ -173,5 +190,10 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
             return MaidUseHandCrankUtil.getMaidStress(maid);
         else
             return 0;
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        return false;  // todo:由于客户端无法计算正确应力，隐藏应力显示
     }
 }

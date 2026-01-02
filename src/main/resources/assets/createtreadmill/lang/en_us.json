@@ -51,5 +51,18 @@
 
   "config.jade.plugin_createtreadmill.treadmill_provider": "Treadmill",
   "painting.createtreadmill.little_mad.title": "GLY's Failed Creation",
-  "painting.createtreadmill.little_mad.author": "gly091020, N44"
+  "painting.createtreadmill.little_mad.author": "gly091020, N44",
+
+  "block.createtreadmill.maid_motor.maid_name": "Contains Maid: %s",
+  "block.createtreadmill.maid_motor.tip1": "§cPlease note, this item is currently in a testing state.",
+  "block.createtreadmill.maid_motor.tip2": "§cIt may cause maid data loss. Please back up your save file!",
+
+  "createtreadmill.ponder.maid_motor.header": "Extreme Streamlining",
+  "createtreadmill.ponder.maid_motor.text_1": "This is a Maid Motor.",
+  "createtreadmill.ponder.maid_motor.text_2": "Hold a Smart Slab or Photo to insert a maid. Use the Smart Slab again to extract her.",
+  "createtreadmill.ponder.maid_motor.text_3": "Once a maid is inserted, stress output will be calculated automatically.",
+  "createtreadmill.ponder.maid_motor.text_4": "The output speed can be adjusted from the sides.",
+  "createtreadmill.ponder.maid_motor.text_5": "Click the back with a Wrench to open a window, revealing the internal maid.",
+  "createtreadmill.ponder.maid_motor.text_6": "Maid data is preserved when the motor is broken.",
+  "createtreadmill.ponder.maid_motor.text_7": "If MaidUseHandCrank is installed, the stress it generates will also be calculated."
 }

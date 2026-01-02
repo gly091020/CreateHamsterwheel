@@ -95,7 +95,7 @@ public class MaidMotorRenderer extends KineticBlockEntityRenderer<MaidMotorBlock
                 ms.mulPose(Axis.YP.rotationDegrees(v));
             }
         }
-        var maid = be.getMaid();
+        var maid = be.getRenderMaid();
         if(maid != null) {
             EntityRenderer<? super Entity> renderer = ENTITY_RENDER_DISPATCHER.getRenderer(maid);
             renderer.render(maid, 0, partialTicks, ms, buffer, light);

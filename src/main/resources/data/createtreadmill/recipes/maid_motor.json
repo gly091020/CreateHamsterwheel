@@ -1,0 +1,28 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "CHH",
+    "CHH",
+    "CTC"
+  ],
+  "key": {
+    "H": [
+      {
+        "item": "create:hand_crank"
+      }
+    ],
+    "C":[
+      {
+        "item": "create:andesite_casing"
+      }
+    ],
+    "T":[
+      {
+        "item": "createtreadmill:treadmill"
+      }
+    ]
+  },
+  "result": {
+    "id": "createtreadmill:maid_motor"
+  }
+}

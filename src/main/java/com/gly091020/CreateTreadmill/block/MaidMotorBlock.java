@@ -3,6 +3,7 @@ package com.gly091020.CreateTreadmill.block;
 import com.github.tartaricacid.touhoulittlemaid.init.InitDataComponent;
 import com.github.tartaricacid.touhoulittlemaid.init.InitItems;
 import com.github.tartaricacid.touhoulittlemaid.item.AbstractStoreMaidItem;
+import com.gly091020.CreateTreadmill.CreateTreadmillMod;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
@@ -33,6 +34,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidMotorBlockEntity> {
     public static final BooleanProperty GLASS = BooleanProperty.create("glass");
@@ -118,7 +121,10 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
                 var maid = blockEntity.getMaid();
                 if(maid != null){
                     var stack1 = InitItems.SMART_SLAB_HAS_MAID.get().getDefaultInstance();
-                    maid.setOwnerUUID(player.getUUID());  // 我也不知道为什么要这行代码，但是不加要崩溃
+                    if(maid.getOwnerUUID() == null){
+                        CreateTreadmillMod.LOGGER.warn("女仆{}出现没有主人的情况", maid.getName().getString());
+                        maid.setOwnerUUID(new UUID(0, 0));
+                    }
                     AbstractStoreMaidItem.storeMaidData(stack1, maid);
                     blockEntity.setMaid(null);
                     blockEntity.setChanged();
@@ -137,7 +143,7 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if(!pNewState.is(MaidPlugin.MAID_MOTOR_BLOCK)){
-            var stack = MaidPlugin.MAID_MOTOR_ITEM.asStack().copyWithCount(1);
+            var stack = MaidPlugin.MAID_MOTOR_BLOCK.asStack().copyWithCount(1);
             if (pLevel.getBlockEntity(pPos) instanceof MaidMotorBlockEntity entity && entity.getMaid() != null)
                 stack.set(InitDataComponent.MAID_INFO, CustomData.of(MaidMotorBlockEntity.maidToNBT(entity.getMaid())));
             popResource(pLevel, pPos, stack);

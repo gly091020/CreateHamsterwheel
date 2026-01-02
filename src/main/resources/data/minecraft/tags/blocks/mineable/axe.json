@@ -1,5 +1,6 @@
 {
   "values": [
-    "createtreadmill:treadmill"
+    "createtreadmill:treadmill",
+    "createtreadmill:maid_motor"
   ]
 }
