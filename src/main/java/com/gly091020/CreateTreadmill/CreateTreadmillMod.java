@@ -6,7 +6,6 @@ import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.config.TreadmillConfig;
 import com.gly091020.CreateTreadmill.item.TreadmillItem;
 import com.gly091020.CreateTreadmill.little_mad.LittleMadRegistry;
-import com.gly091020.CreateTreadmill.maid.MaidEventHandler;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.gly091020.CreateTreadmill.renderer.TreadmillRenderer;
 import com.gly091020.CreateTreadmill.renderer.TreadmillVisual;
@@ -120,7 +119,6 @@ public class CreateTreadmillMod {
         CREATIVE_MODE_TAB_REGISTER.register(bus);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
-            NeoForge.EVENT_BUS.register(MaidEventHandler.class);
         }
         if(ModList.get().isLoaded("touhou_little_mad")){
             LittleMadRegistry.registry();
