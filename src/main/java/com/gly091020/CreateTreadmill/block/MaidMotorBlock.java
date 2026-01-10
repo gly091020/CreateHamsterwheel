@@ -32,7 +32,6 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -82,11 +81,6 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
     }
 
     @Override
-    public boolean hideStressImpact() {
-        return true;
-    }
-
-    @Override
     protected boolean isPathfindable(@NotNull BlockState state, @NotNull PathComputationType pathComputationType) {
         return false;
     }
@@ -112,7 +106,7 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
             var maid = MaidMotorBlockEntity.NBTToMaid(stack.getOrDefault(InitDataComponent.MAID_INFO, CustomData.EMPTY).copyTag(), level);
             if(maid != null && maid.getOwner() != null && maid.getOwner().is(player) && level.getBlockEntity(pos) instanceof MaidMotorBlockEntity blockEntity && blockEntity.getMaid() == null){
                 blockEntity.setMaid(maid);
-                blockEntity.setChanged();
+                blockEntity.notifyUpdate();
                 if(stack.is(InitItems.SMART_SLAB_HAS_MAID))
                     player.setItemInHand(hand, InitItems.SMART_SLAB_EMPTY.get().getDefaultInstance());
                 else
@@ -131,7 +125,7 @@ public class MaidMotorBlock extends DirectionalKineticBlock implements IBE<MaidM
                     }
                     AbstractStoreMaidItem.storeMaidData(stack1, maid);
                     blockEntity.setMaid(null);
-                    blockEntity.setChanged();
+                    blockEntity.notifyUpdate();
                     player.setItemInHand(hand, stack1);
                 }
             }

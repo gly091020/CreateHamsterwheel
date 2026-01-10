@@ -1,6 +1,6 @@
 {
   "values": [
     "createtreadmill:treadmill",
-    "createtreadmill:maid_motor"
+    {"id": "createtreadmill:maid_motor", "required": false}
   ]
 }

@@ -57,6 +57,9 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
         Objects.requireNonNull(roamingVarsTag);
         vars.forEach(roamingVarsTag::putFloat);
         compound.put("YsmRoamingVars", roamingVarsTag);
+
+        compound.putInt("MaidFavorability", maid.getFavorability()); // 用于计算应力
+
         return compound;
     }
 
@@ -99,44 +102,50 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
-        if(clientPacket)return;
-        if(this.maid != null){
-            compound.put("maid", maidToNBT(maid));
-        } else if (maidTag != null) {
-            compound.put("maid", maidTag);
+        if(clientPacket){
+            if(!getBlockState().getValue(MaidMotorBlock.GLASS))return;
+            if(maid != null){
+                compound.put("renderMaid", maidToNBTOnlyRender(maid));
+            }
+        } else {
+            if (this.maid != null) {
+                compound.put("maid", maidToNBT(maid));
+            } else if (maidTag != null) {
+                compound.put("maid", maidTag);
+            }
         }
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-        if(clientPacket)return;
-        if(compound.contains("maid")){
-            maidTag = compound.getCompound("maid");
+        if(clientPacket){
+            if(compound.contains("renderMaid") && level != null){
+                var tag = compound.getCompound("renderMaid");
+                renderMaid = NBTToMaid(tag, level);
+                maid = renderMaid;
+            }else{
+                renderMaid = null;
+            }
+        } else {
+            if (compound.contains("maid")) {
+                maidTag = compound.getCompound("maid");
+            }
         }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        var tag = super.getUpdateTag(registries);
+        if(maid != null)tag.putInt("MaidFavorability", maid.getFavorability());
+        return tag;
     }
 
     @Override
     public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider registries) {
         super.onDataPacket(net, pkt, registries);
         var tag = pkt.getTag();
-        if(tag.contains("maid")){
-            maidTag = tag.getCompound("maid");
-        }else setMaid(null);
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        var tag = super.getUpdateTag(registries);
-        if(this.maid != null){
-            maidTag = maidToNBT(maid);
-            // todo:此处应该使用maidToNBTOnlyRender而不是maidToNBT
-            // 但是这样会导致女仆物品丢失
-            // 我是想不到客户端是如何影响服务端的
-            // simibubi的神必代码
-            tag.put("maid", maidTag);
-        }
-        return tag;
+        if(tag.contains("MaidFavorability") && maid != null)maid.setFavorability(tag.getInt("MaidFavorability"));
     }
 
     @Override
@@ -148,9 +157,9 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
                 setMaid(NBTToMaid(maidToNBTOnlyRender(maid), level));
         }
         if (level != null && level.isClientSide && renderMaid != null) {
-            renderMaid.tick();
             renderMaid.setOnGround(true);
-            renderMaid.walkAnimation.setSpeed(Math.abs(getSpeed()) > 0 ? Math.abs(getSpeed() / 16) : 0);
+            renderMaid.tickCount++;
+            renderMaid.walkAnimation.update(Math.abs(getSpeed()) > 0 ? Math.abs(getSpeed() / 16) : 0, 0.4f);
         }
     }
 
@@ -194,6 +203,6 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return false;  // todo:由于客户端无法计算正确应力，隐藏应力显示
+        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 }

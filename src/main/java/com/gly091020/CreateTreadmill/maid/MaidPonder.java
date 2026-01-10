@@ -9,11 +9,13 @@ import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.registration.MultiSceneBuilder;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
@@ -30,7 +32,8 @@ public class MaidPonder {
         PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         builder.addStoryBoard("treadmill/run", MaidPonder::treadmillMaid);
         HELPER.forComponents(MaidPlugin.MAID_MOTOR_BLOCK)
-                .addStoryBoard("maid_motor/maid_motor", MaidPonder::maidMotor);
+                .addStoryBoard("maid_motor/maid_motor", MaidPonder::maidMotor,
+                        AllCreatePonderTags.KINETIC_SOURCES);
     }
 
     public static void maidMotor(SceneBuilder builder, SceneBuildingUtil util){
@@ -188,5 +191,10 @@ public class MaidPonder {
         scene.addKeyframe();
         scene.idle(45);
         scene.markAsFinished();
+    }
+
+    public static void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
+        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        HELPER.addToTag(AllCreatePonderTags.KINETIC_SOURCES).add(MaidPlugin.MAID_MOTOR_BLOCK);
     }
 }

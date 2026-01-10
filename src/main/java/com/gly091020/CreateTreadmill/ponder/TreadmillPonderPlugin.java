@@ -34,5 +34,8 @@ public class TreadmillPonderPlugin implements PonderPlugin {
     public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
         PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         HELPER.addToTag(AllCreatePonderTags.KINETIC_SOURCES).add(CreateTreadmillMod.TREADMILL_BLOCK);
+        if(ModList.get().isLoaded("touhou_little_maid")){
+            MaidPonder.registerTags(helper);
+        }
     }
 }

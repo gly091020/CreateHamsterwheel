@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
-import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 @LittleMaidExtension
 public class MaidPlugin implements ILittleMaid {
