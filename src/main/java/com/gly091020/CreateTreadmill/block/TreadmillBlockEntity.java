@@ -65,6 +65,7 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
             setPos();
             speedUp();
             if (onTreadmillEntity instanceof Player player) {
+                onTreadmillEntity.setDeltaMovement(Vec3.atLowerCornerOf(getBlockState().getValue(HorizontalKineticBlock.HORIZONTAL_FACING).getNormal()).multiply(0.3f, 0, 0.3f));
                 if (player.isShiftKeyDown() || player.getPose() == Pose.SITTING) {
                     setOnTreadmillEntity(null);
                 }
