@@ -3,8 +3,6 @@ package com.gly091020.CreateTreadmill;
 import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
 import com.gly091020.CreateTreadmill.ponder.TreadmillPonderPlugin;
-import com.simibubi.create.CreateClient;
-import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SpriteShiftEntry;

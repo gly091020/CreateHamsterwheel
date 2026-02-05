@@ -122,22 +122,8 @@ public class CreateTreadmillMod {
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
         }
-        if(FMLEnvironment.dist.isClient()){
-            registryScreen(context.getActiveContainer());
-        }
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateTreadmillClient.onCtorClient(context, bus));
-    }
-
-    public static void registryScreen(ModContainer context){
-        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(
-                (mc, parent) -> {
-                    if (ModList.get().isLoaded("cloth_config")) {
-                        return ClothConfigScreenGetter.get(parent);
-                    }
-                    return new BaseConfigScreen(parent, CreateTreadmillMod.MOD_ID);
-                }
-        ));
     }
 
     public CreateTreadmillMod() {
