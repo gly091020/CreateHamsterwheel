@@ -25,11 +25,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 public class MaidPonder {
     public static void registry(MultiSceneBuilder builder, PonderSceneRegistrationHelper<ResourceLocation> helper){
-        PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         builder.addStoryBoard("treadmill/run", MaidPonder::treadmillMaid);
         HELPER.forComponents(MaidPlugin.MAID_MOTOR_BLOCK)
                 .addStoryBoard("maid_motor/maid_motor", MaidPonder::maidMotor,
@@ -59,7 +59,7 @@ public class MaidPonder {
                 .text("")
                 .pointAt(maidMotorPos.getCenter());
         scene.idle(25);
-        var smartSlabMaid = InitItems.SMART_SLAB_HAS_MAID.toStack();
+        var smartSlabMaid = InitItems.SMART_SLAB_HAS_MAID.get().getDefaultInstance();
         scene.overlay().showControls(maidMotorPos.getCenter(),
                         Pointing.UP, 20).rightClick()
                 .withItem(smartSlabMaid);
@@ -70,7 +70,7 @@ public class MaidPonder {
                         var maid = new EntityMaid(Minecraft.getInstance().level);
                         if(CreateTreadmillMod.isCreator())
                             maid.setCustomName(Component.literal("=>")
-                                    .append(Component.literal(Minecraft.getInstance().getGameProfile().getName())));
+                                    .append(Component.literal(Minecraft.getInstance().getUser().getGameProfile().getName())));
                         entity.setMaid(maid);
                     }
                 });
@@ -154,7 +154,7 @@ public class MaidPonder {
             }
             if(CreateTreadmillMod.isCreator()){
                 entity.setCustomName(Component.literal(String.format("=>%s",
-                        Minecraft.getInstance().getGameProfile().getName())));
+                        Minecraft.getInstance().getUser().getGameProfile().getName())));
             }
             entity.walkAnimation.setSpeed(3);
             return entity;
@@ -194,7 +194,7 @@ public class MaidPonder {
     }
 
     public static void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         HELPER.addToTag(AllCreatePonderTags.KINETIC_SOURCES).add(MaidPlugin.MAID_MOTOR_BLOCK);
     }
 }

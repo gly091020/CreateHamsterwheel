@@ -10,10 +10,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -82,7 +82,8 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
     }
 
     @Override
-    protected @NotNull List<ItemStack> getDrops(@NotNull BlockState state, LootParams.@NotNull Builder params) {
+    @NotNull
+    public List<ItemStack> getDrops(@NotNull BlockState state, LootParams.@NotNull Builder params) {
         return Collections.singletonList(new ItemStack(CreateTreadmillMod.TREADMILL_ITEM.get(), 1));
     }
 
@@ -92,7 +93,7 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
     }
 
     @Override
-    protected void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+    public void tick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         withBlockEntityDo(level, pos, TreadmillBlockEntity::lazyTick);
     }
 
@@ -117,17 +118,17 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         var entity = level.getBlockEntity(findPart(level, state, pos, Part.BOTTOM_FRONT));
         if(entity instanceof TreadmillBlockEntity blockEntity && !hasShaftTowards(level, pos, state, result.getDirection())){
             if(blockEntity.getOnTreadmillEntity() != null){
                 blockEntity.setOnTreadmillEntity(null);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
             for(Entity entity1: level.getEntities(null, new AABB(pos).inflate(10))){
-                if(entity1 instanceof LivingEntity livingEntity && entity1 instanceof Leashable leashable && leashable.getLeashHolder() != null && leashable.getLeashHolder().is(player)){
-                    blockEntity.setOnTreadmillEntity(livingEntity);
-                    leashable.dropLeash(true, true);
+                if(entity1 instanceof Mob mob && mob.isLeashed() && mob.getLeashHolder() != null && mob.getLeashHolder().is(player)){
+                    blockEntity.setOnTreadmillEntity(mob);
+                    mob.dropLeash(true, true);
                     blockEntity.setEntityTimer(20 * 60);
                     if (entity1 instanceof OwnableEntity ownableEntity && ownableEntity.getOwner() != null){
                         blockEntity.setEntityTimer(20 * 60 * 10);
@@ -135,17 +136,18 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
                     if(CreateTreadmillMod.hasMaid() && MaidHelper.isMaid(entity1)){
                         blockEntity.setEntityTimer(Integer.MAX_VALUE);
                     }
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
             blockEntity.setOnTreadmillEntity(player);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.CONSUME;
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @NotNull
+    public VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         switch (state.getValue(PART)){
             case TOP_BACK, TOP_FRONT -> {return Shapes.create(new AABB(0, 0, 0, 1, 5.5 / 16, 1));}
         }
@@ -167,11 +169,11 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
             p2 = pos.below(-1);
             p3 = p1.below(-1);
         }
-        if(level.getBlockState(p1).is(CreateTreadmillMod.TREADMILL_BLOCK) && level.getBlockState(p1).getValue(PART) == part){
+        if(level.getBlockState(p1).is(CreateTreadmillMod.TREADMILL_BLOCK.get()) && level.getBlockState(p1).getValue(PART) == part){
             return p1;
-        }else if(level.getBlockState(p2).is(CreateTreadmillMod.TREADMILL_BLOCK) && level.getBlockState(p2).getValue(PART) == part){
+        }else if(level.getBlockState(p2).is(CreateTreadmillMod.TREADMILL_BLOCK.get()) && level.getBlockState(p2).getValue(PART) == part){
             return p2;
-        }else if(level.getBlockState(p3).is(CreateTreadmillMod.TREADMILL_BLOCK) && level.getBlockState(p3).getValue(PART) == part){
+        }else if(level.getBlockState(p3).is(CreateTreadmillMod.TREADMILL_BLOCK.get()) && level.getBlockState(p3).getValue(PART) == part){
             return p3;
         }
         return pos;
@@ -199,7 +201,7 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
             level.setBlock(p3, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }else{
             var p = findPart(level, oldState, pos, Part.BOTTOM_BACK);
-            if(level.getBlockState(p).is(CreateTreadmillMod.TREADMILL_BLOCK) && level.getBlockState(p).getValue(HORIZONTAL_FACING) != oldState.getValue(HORIZONTAL_FACING))
+            if(level.getBlockState(p).is(CreateTreadmillMod.TREADMILL_BLOCK.get()) && level.getBlockState(p).getValue(HORIZONTAL_FACING) != oldState.getValue(HORIZONTAL_FACING))
                 return;
             destroy(level, p, level.getBlockState(p));
             level.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);

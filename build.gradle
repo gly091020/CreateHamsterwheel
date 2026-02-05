@@ -87,6 +87,7 @@ dependencies {
     implementation fg.deobf("curse.maven:touhou-little-maid-355044:7307720")
     implementation fg.deobf("curse.maven:cloth-config-348521:5729105")
     implementation fg.deobf("curse.maven:jade-324717:6855440")
+    implementation fg.deobf("curse.maven:maidusehandcrank-1347168:7513397")
 //    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 }
 

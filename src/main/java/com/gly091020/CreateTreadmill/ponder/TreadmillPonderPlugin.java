@@ -9,18 +9,18 @@ import net.createmod.ponder.api.registration.PonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 public class TreadmillPonderPlugin implements PonderPlugin {
     @Override
     public @NotNull String getModId() {
-        return CreateTreadmillMod.ModID;
+        return CreateTreadmillMod.MOD_ID;
     }
 
     @Override
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
-        PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderSceneRegistrationHelper<ItemProviderEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         var r = HELPER.forComponents(CreateTreadmillMod.TREADMILL_BLOCK)
                 .addStoryBoard("treadmill/run", Scenes::treadmillRun, AllCreatePonderTags.KINETIC_SOURCES)
                 .addStoryBoard("treadmill/run", Scenes::treadmillFly)
@@ -32,7 +32,7 @@ public class TreadmillPonderPlugin implements PonderPlugin {
 
     @Override
     public void registerTags(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         HELPER.addToTag(AllCreatePonderTags.KINETIC_SOURCES).add(CreateTreadmillMod.TREADMILL_BLOCK);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPonder.registerTags(helper);

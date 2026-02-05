@@ -23,6 +23,6 @@ public class TreadmillProvider implements IBlockComponentProvider {
 
     @Override
     public ResourceLocation getUid() {
-        return ResourceLocation.fromNamespaceAndPath(CreateTreadmillMod.ModID, "treadmill_provider");
+        return new ResourceLocation(CreateTreadmillMod.MOD_ID, "treadmill_provider");
     }
 }

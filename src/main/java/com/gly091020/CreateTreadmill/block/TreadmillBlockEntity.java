@@ -98,8 +98,8 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        var update = super.getUpdateTag(registries);
+    public @NotNull CompoundTag getUpdateTag() {
+        var update = super.getUpdateTag();
         update.putInt("speedup_timer", speedUpTimer);
         update.putInt("entity_timer", entityTimer);
         update.putInt("entity", onTreadmillEntity == null ? -1 : onTreadmillEntity.getId());
@@ -107,9 +107,8 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt,
-                             HolderLookup.@NotNull Provider registries) {
-        super.onDataPacket(net, pkt, registries);
+    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt) {
+        super.onDataPacket(net, pkt);
         speedUpTimer = pkt.getTag().getInt("speedup_timer");
         entityTimer = pkt.getTag().getInt("entity_timer");
         var id = pkt.getTag().getInt("entity");
@@ -171,7 +170,7 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         if(!CreateTreadmillMod.CONFIG.TREADMILL_SPEED_UP.get()){return;}
         if(onTreadmillEntity.hurtTime > 0 && !(onTreadmillEntity.getLastHurtMob() instanceof Player)){
             var damageSource = onTreadmillEntity.getLastDamageSource();
-            if(damageSource != null && damageSource.getWeaponItem() != null){
+            if(damageSource != null && damageSource.getDirectEntity() != null){
                 speedUpTimer = 1200;
                 update();
             }
@@ -236,7 +235,7 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
 
     public static TreadmillBlockEntity getBlockEntityByEntity(Entity entity){
         var level = entity.level();
-        if(level.getBlockState(entity.blockPosition()).is(CreateTreadmillMod.TREADMILL_BLOCK)){
+        if(level.getBlockState(entity.blockPosition()).is(CreateTreadmillMod.TREADMILL_BLOCK.get())){
             var part = TreadmillBlock.findPart(level, level.getBlockState(entity.blockPosition()),
                     entity.blockPosition(), Part.BOTTOM_FRONT);
             var e = level.getBlockEntity(part);
@@ -357,16 +356,16 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         }
         switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)){
             case EAST -> {
-                return onTreadmillEntity.getKnownMovement().x > min;
+                return onTreadmillEntity.getDeltaMovement().x > min;
             }
             case WEST -> {
-                return onTreadmillEntity.getKnownMovement().x < -min;
+                return onTreadmillEntity.getDeltaMovement().x < -min;
             }
             case SOUTH -> {
-                return onTreadmillEntity.getKnownMovement().z > min;
+                return onTreadmillEntity.getDeltaMovement().z > min;
             }
             case NORTH -> {
-                return onTreadmillEntity.getKnownMovement().z < -min;
+                return onTreadmillEntity.getDeltaMovement().z < -min;
             }
         }
         return false;
@@ -376,10 +375,10 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         if(onTreadmillEntity == null)return 0;
         switch (getBlockState().getValue(TreadmillBlock.HORIZONTAL_FACING)){
             case EAST, WEST -> {
-                return onTreadmillEntity.getKnownMovement().x;
+                return onTreadmillEntity.getDeltaMovement().x;
             }
             case SOUTH, NORTH -> {
-                return onTreadmillEntity.getKnownMovement().z;
+                return onTreadmillEntity.getDeltaMovement().z;
             }
         }
         return 0;
@@ -396,8 +395,8 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    public void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(tag, registries, clientPacket);
+    public void write(CompoundTag tag, boolean clientPacket) {
+        super.write(tag, clientPacket);
         if(this.getBlockState().getValue(PART) != Part.BOTTOM_FRONT){return;}
         if(clientPacket)return;
         if(onTreadmillEntity != null)
@@ -406,8 +405,8 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        super.read(compound, clientPacket);
         if(this.getBlockState().getValue(PART) != Part.BOTTOM_FRONT){return;}
         if(clientPacket)return;
         if(compound.contains("onTreadmillEntity")){

@@ -9,7 +9,6 @@ import com.simibubi.create.content.kinetics.motor.CreativeMotorBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -45,11 +44,11 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
 
     public static CompoundTag maidToNBTOnlyRender(@NotNull EntityMaid maid){
         var compound = new CompoundTag();
-        compound.putString("model_id", maid.getModelId());
+        compound.putString("ModelId", maid.getModelId());
         compound.putBoolean("IsYsmModel", maid.isYsmModel());
         compound.putString("YsmModelId", maid.getYsmModelId());
         compound.putString("YsmModelTexture", maid.getYsmModelTexture());
-        compound.putString("YsmModelName", Component.Serializer.toJson(maid.getYsmModelName(), maid.registryAccess()));
+        compound.putString("YsmModelName", Component.Serializer.toJson(maid.getYsmModelName()));
         compound.putString("YsmRouletteAnim", maid.rouletteAnim);
         compound.putInt("YsmRoamingUpdateFlag", maid.roamingVarsUpdateFlag);
         CompoundTag roamingVarsTag = new CompoundTag();
@@ -100,8 +99,8 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
+    protected void write(CompoundTag compound, boolean clientPacket) {
+        super.write(compound, clientPacket);
         if(clientPacket){
             if(!getBlockState().getValue(MaidMotorBlock.GLASS))return;
             if(maid != null){
@@ -117,8 +116,8 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
+    protected void read(CompoundTag compound, boolean clientPacket) {
+        super.read(compound, clientPacket);
         if(clientPacket){
             if(compound.contains("renderMaid") && level != null){
                 var tag = compound.getCompound("renderMaid");
@@ -135,15 +134,15 @@ public class MaidMotorBlockEntity extends CreativeMotorBlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        var tag = super.getUpdateTag(registries);
+    public @NotNull CompoundTag getUpdateTag() {
+        var tag = super.getUpdateTag();
         if(maid != null)tag.putInt("MaidFavorability", maid.getFavorability());
         return tag;
     }
 
     @Override
-    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider registries) {
-        super.onDataPacket(net, pkt, registries);
+    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt) {
+        super.onDataPacket(net, pkt);
         var tag = pkt.getTag();
         if(tag.contains("MaidFavorability") && maid != null)maid.setFavorability(tag.getInt("MaidFavorability"));
     }
