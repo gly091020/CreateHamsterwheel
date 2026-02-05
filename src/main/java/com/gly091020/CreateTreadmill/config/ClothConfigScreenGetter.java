@@ -1,35 +1,19 @@
 package com.gly091020.CreateTreadmill.config;
 
-import com.gly091020.CreateTreadmill.CreateTreadmillMod;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.BooleanToggleBuilder;
 import me.shedaniel.clothconfig2.impl.builders.IntFieldBuilder;
 import net.createmod.catnip.config.ConfigBase;
-import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 
 import static com.gly091020.CreateTreadmill.CreateTreadmillMod.CONFIG;
 
 @OnlyIn(Dist.CLIENT)
 public class ClothConfigScreenGetter {
-    public static void registryScreen(ModContainer context){
-        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(
-                (mc, parent) -> {
-                    if (ModList.get().isLoaded("cloth_config")) {
-                        return ClothConfigScreenGetter.get(parent);
-                    }
-                    return new BaseConfigScreen(parent, CreateTreadmillMod.MOD_ID);
-                }
-        ));
-    }
-
     public static Screen get(Screen parent){
         var builder = ConfigBuilder.create();
         builder.setTitle(Component.translatable("config.createtreadmill.title"));

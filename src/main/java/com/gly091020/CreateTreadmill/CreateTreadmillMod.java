@@ -17,6 +17,7 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
 import net.minecraft.advancements.Advancement;
@@ -32,12 +33,14 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -120,10 +123,21 @@ public class CreateTreadmillMod {
             MaidPlugin.registryData(bus);
         }
         if(FMLEnvironment.dist.isClient()){
-            ClothConfigScreenGetter.registryScreen(context.getActiveContainer());
+            registryScreen(context.getActiveContainer());
         }
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CreateTreadmillClient.onCtorClient(context, bus));
+    }
+
+    public static void registryScreen(ModContainer context){
+        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(
+                (mc, parent) -> {
+                    if (ModList.get().isLoaded("cloth_config")) {
+                        return ClothConfigScreenGetter.get(parent);
+                    }
+                    return new BaseConfigScreen(parent, CreateTreadmillMod.MOD_ID);
+                }
+        ));
     }
 
     public CreateTreadmillMod() {
