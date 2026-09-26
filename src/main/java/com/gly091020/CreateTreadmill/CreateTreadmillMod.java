@@ -2,7 +2,6 @@ package com.gly091020.CreateTreadmill;
 
 import com.gly091020.CreateTreadmill.block.TreadmillBlock;
 import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
-import com.gly091020.CreateTreadmill.config.ClothConfigScreenGetter;
 import com.gly091020.CreateTreadmill.config.TreadmillConfig;
 import com.gly091020.CreateTreadmill.item.TreadmillItem;
 import com.gly091020.CreateTreadmill.maid.MaidPlugin;
@@ -17,44 +16,32 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SpriteShiftEntry;
 import net.createmod.catnip.render.SpriteShifter;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
 
@@ -80,7 +67,7 @@ public class CreateTreadmillMod {
                         if(ModList.get().isLoaded("touhou_little_maid")){
                             output.accept(MaidPlugin.MAID_MOTOR_BLOCK, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
                         }
-                        if(isCreator()){
+                        if(CreateTreadmillClient.isCreator()){
                             ItemStack playerHand = new ItemStack(Items.PLAYER_HEAD, 1);
 //                            playerHand.set(DataComponents.PROFILE, new ResolvableProfile(Minecraft.getInstance().getGameProfile()));
                             output.accept(playerHand, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
@@ -100,13 +87,10 @@ public class CreateTreadmillMod {
             .renderer(() -> TreadmillRenderer::new)
             .validBlock(TREADMILL_BLOCK)
             .register();
+    public static final DeferredRegister<PaintingVariant> PAINTING_VARIANTS = DeferredRegister.create(Registries.PAINTING_VARIANT, MOD_ID);
+    public static final RegistryObject<PaintingVariant> LITTLE_MAD = PAINTING_VARIANTS.register("little_mad", () -> new PaintingVariant(16, 16));
     public static final PartialModel BELT_MODEL = PartialModel.of(new ResourceLocation(MOD_ID, "block/belt"));
     public static final SpriteShiftEntry BELT_SHIFT = SpriteShifter.get(new ResourceLocation(MOD_ID, "block/belt"), new ResourceLocation(MOD_ID, "block/belt_shift"));
-
-    public static final Map<Integer, LivingEntity> WALKING_ENTITY = new HashMap<>();
-
-    public static final UUID _5112151111121 = UUID.fromString("91bd580f-5f17-4e30-872f-2e480dd9a220");
-    public static final UUID N44 = UUID.fromString("5a33e9b0-35bc-44ed-9b4e-03e3e180a3d2");
 
     public CreateTreadmillMod(IEventBus bus, ModLoadingContext context) {
         var specPair = new ForgeConfigSpec.Builder().configure((builder) -> {
@@ -119,6 +103,7 @@ public class CreateTreadmillMod {
         context.registerConfig(ModConfig.Type.COMMON, CONFIG.specification);
         REGISTRIES.registerEventListeners(bus);
         CREATIVE_MODE_TAB_REGISTER.register(bus);
+        PAINTING_VARIANTS.register(bus);
         if(ModList.get().isLoaded("touhou_little_maid")){
             MaidPlugin.registryData(bus);
         }
@@ -128,12 +113,6 @@ public class CreateTreadmillMod {
 
     public CreateTreadmillMod() {
         this(FMLJavaModLoadingContext.get().getModEventBus(), ModLoadingContext.get());
-    }
-
-    public static boolean isCreator(){
-        return Objects.equals(Minecraft.getInstance().getUser().getGameProfile().getId(), N44) ||
-                Objects.equals(Minecraft.getInstance().getUser().getGameProfile().getId(), _5112151111121);
-        //todo: 需要 uTa4u 的 uuid
     }
 
     public static boolean hasMaid(){
@@ -146,18 +125,6 @@ public class CreateTreadmillMod {
 
     @Mod.EventBusSubscriber
     public static class HandleEvent{
-        @SubscribeEvent
-        public static void onRenderEntity(RenderLivingEvent.Pre<?, ?> event){
-            if(WALKING_ENTITY.containsKey(event.getEntity().getId()) && !(event.getEntity() instanceof Player)) {
-                var speed = 1;
-                var entity = TreadmillBlockEntity.getBlockEntityByEntity(event.getEntity());
-                if(entity != null && Math.abs(entity.getSpeed()) > entity.getSettingSpeed()){
-                    speed = (int) (Math.abs(entity.getSpeed()) / 32);
-                }
-                event.getEntity().walkAnimation.setSpeed(speed);
-            }
-        }
-
         @SubscribeEvent
         public static void onEntityDie(LivingDeathEvent deathEvent){
             var entity = deathEvent.getEntity();

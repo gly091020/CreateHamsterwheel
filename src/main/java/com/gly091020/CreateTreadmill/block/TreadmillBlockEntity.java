@@ -1,5 +1,6 @@
 package com.gly091020.CreateTreadmill.block;
 
+import com.gly091020.CreateTreadmill.CreateTreadmillClient;
 import com.gly091020.CreateTreadmill.CreateTreadmillMod;
 import com.gly091020.CreateTreadmill.Part;
 import com.gly091020.CreateTreadmill.maid.MaidHelper;
@@ -7,7 +8,6 @@ import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -136,11 +137,11 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         if(onTreadmillEntity == null && this.onTreadmillEntity != null){
             if(!canDropIt())
                 this.onTreadmillEntity.setDeltaMovement(Vec3.ZERO);
-            CreateTreadmillMod.WALKING_ENTITY.remove(this.onTreadmillEntity.getId());
+            removeWakingEntity(this.onTreadmillEntity.getId());
             this.onTreadmillEntity.walkAnimation.setSpeed(0);
         }
         if (onTreadmillEntity != null) {
-            CreateTreadmillMod.WALKING_ENTITY.put(onTreadmillEntity.getId(), onTreadmillEntity);
+            addWalkingEntity(onTreadmillEntity.getId(), onTreadmillEntity);
         }else{
             speedUpTimer = 0;
             entityTimer = Integer.MAX_VALUE;
@@ -149,6 +150,18 @@ public class TreadmillBlockEntity extends GeneratingKineticBlockEntity {
         setChanged();
         setPos();
         update();
+    }
+
+    public void addWalkingEntity(int k, LivingEntity v){
+        v.setSprinting(true);
+        if(!FMLEnvironment.dist.isClient())return;
+        CreateTreadmillClient.WALKING_ENTITY.put(k, v);
+    }
+
+    public void removeWakingEntity(int k){
+        if(!FMLEnvironment.dist.isClient())return;
+        var r = CreateTreadmillClient.WALKING_ENTITY.remove(k);
+        if(r != null)r.setSprinting(false);
     }
 
     @Override

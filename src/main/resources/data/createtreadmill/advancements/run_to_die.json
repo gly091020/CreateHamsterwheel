@@ -13,8 +13,7 @@
     "frame": "goal",
     "hidden": true,
     "icon": {
-      "count": 1,
-      "id": "createtreadmill:treadmill"
+      "item": "createtreadmill:treadmill"
     },
     "title": {
       "translate": "advancement.createtreadmill.run_to_die"

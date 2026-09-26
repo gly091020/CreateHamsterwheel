@@ -142,7 +142,7 @@ public class TreadmillBlock extends HorizontalKineticBlock implements IBE<Treadm
             blockEntity.setOnTreadmillEntity(player);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.CONSUME;
+        return InteractionResult.PASS;
     }
 
     @Override

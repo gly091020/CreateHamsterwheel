@@ -2,7 +2,7 @@ package com.gly091020.CreateTreadmill.maid;
 
 import com.github.tartaricacid.touhoulittlemaid.entity.passive.EntityMaid;
 import com.github.tartaricacid.touhoulittlemaid.init.InitItems;
-import com.gly091020.CreateTreadmill.CreateTreadmillMod;
+import com.gly091020.CreateTreadmill.CreateTreadmillClient;
 import com.gly091020.CreateTreadmill.block.MaidMotorBlock;
 import com.gly091020.CreateTreadmill.block.MaidMotorBlockEntity;
 import com.gly091020.CreateTreadmill.block.TreadmillBlockEntity;
@@ -68,7 +68,7 @@ public class MaidPonder {
                 MaidMotorBlockEntity.class, entity -> {
                     if (Minecraft.getInstance().level != null) {
                         var maid = new EntityMaid(Minecraft.getInstance().level);
-                        if(CreateTreadmillMod.isCreator())
+                        if(CreateTreadmillClient.isCreator())
                             maid.setCustomName(Component.literal("=>")
                                     .append(Component.literal(Minecraft.getInstance().getUser().getGameProfile().getName())));
                         entity.setMaid(maid);
@@ -152,7 +152,7 @@ public class MaidPonder {
             if(e instanceof TreadmillBlockEntity treadmillBlockEntity){
                 treadmillBlockEntity.setOnTreadmillEntity(entity);
             }
-            if(CreateTreadmillMod.isCreator()){
+            if(CreateTreadmillClient.isCreator()){
                 entity.setCustomName(Component.literal(String.format("=>%s",
                         Minecraft.getInstance().getUser().getGameProfile().getName())));
             }

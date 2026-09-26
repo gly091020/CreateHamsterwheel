@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "createtreadmill:treadmill_item"
+          "name": "createtreadmill:treadmill"
         }
       ],
       "rolls": 1.0
