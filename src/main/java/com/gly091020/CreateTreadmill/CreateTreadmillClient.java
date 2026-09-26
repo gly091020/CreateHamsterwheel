@@ -68,7 +68,7 @@ public final class CreateTreadmillClient {
         //todo: 需要 uTa4u 的 uuid
     }
 
-    @Mod.EventBusSubscriber
+    @Mod.EventBusSubscriber(Dist.CLIENT)
     public static class EventHandler{
         @SubscribeEvent
         public static void onRenderEntity(RenderLivingEvent.Pre<?, ?> event){
